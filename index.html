@@ -3,30 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leads de Supabase</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Oferta Exclusiva - Combo Perfecto Oreo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset de estilos básicos */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            /* Fondo Azul Oreo Premium */
+            background: radial-gradient(circle at center, #0e52a4 0%, #052046 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Contenedor Principal (Efecto de cristal moderno/Glassmorphism) */
+        .landing-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Bloque Izquierdo: Imagen del Producto */
+        .product-gallery {
+            flex: 1;
+            min-width: 320px;
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .product-gallery img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 35px rgba(0,0,0,0.5));
+            /* Animación suave de la galleta flotando */
+            animation: float 4s ease-in-out infinite; 
+        }
+
+        /* Bloque Derecho: Información y Oferta */
+        .product-details {
+            flex: 1;
+            min-width: 320px;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-badge {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cddfff;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+            background: linear-gradient(180deg, #ffffff 0%, #bbdbff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #a4cafe;
+            margin-bottom: 30px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        /* Sección de Precios */
+        .price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .price-old {
+            font-size: 1.4rem;
+            color: #8da4c4;
+            text-decoration: line-through;
+            font-weight: 700;
+        }
+
+        .price-current {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .discount-badge {
+            background: #ff3b30;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 8px;
+            transform: rotate(-3deg);
+            box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3);
+            display: inline-block;
+            margin-bottom: 25px;
+            align-self: flex-start;
+            text-transform: uppercase;
+        }
+
+        /* Tarjeta Dorada VIP */
+        .gold-card-notice {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(153, 119, 34, 0.05) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .gold-card-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        .gold-card-text {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fceca7; /* Tono dorado claro */
+            line-height: 1.3;
+        }
+
+        /* Botón de Compra Elegante y Fluido */
+        .btn-buy {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(90deg, #ffffff 0%, #e0efff 100%);
+            color: #052046;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 22px 30px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0, 0, 0, 0.2);
+            /* Transición fluida tipo Apple/Premium */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo que pasa por encima del botón constantemente */
+        .btn-buy::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: skewX(-25deg);
+            animation: shine 3s infinite linear;
+        }
+
+        /* Comportamiento al pasar el mouse por encima */
+        .btn-buy:hover {
+            transform: translateY(-4px); /* Levanta el botón ligeramente */
+            background: linear-gradient(90deg, #e0efff 0%, #ffffff 100%);
+            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2), 0 6px 15px rgba(0, 0, 0, 0.3);
+            color: #0c4cb4;
+        }
+
+        .btn-buy:active {
+            transform: translateY(-1px);
+        }
+
+        /* === ANIMACIONES CSS === */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        /* Diseño Adaptativo (Móviles) */
+        @media (max-width: 768px) {
+            .landing-container {
+                flex-direction: column;
+            }
+            .product-gallery {
+                padding: 30px 20px;
+            }
+            .product-details {
+                padding: 35px 25px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .price-current {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>📊 Mis Leads</h1>
-        <table id="leads-table">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Teléfono</th>
-                    <th>Acciones</th> 
-                </tr>
-            </thead>
-            <tbody id="leads-table-body">
-                <tr>
-                    <td colspan="3">Cargando datos...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <div class="landing-container">
+        <div class="product-gallery">
+            <img src="http://googleusercontent.com/image_generation_content/195" alt="Combo Perfecto Oreo y Leche">
+        </div>
 
-    <script src="app.js"></script>
-</body>
-</html>
+        <div class="product-details">
+            <div class="brand-badge">Oferta Flash</div>
+            <h1>Combo Perfecto</h1>
+            <div class="tagline">Disfruta de la experiencia definitiva sumergiendo tus galletas Oreo favoritas en una explosión de leche fresca.</div>
+            
+            <div class="price-container">
+                <span class="price-old">19.99$</span>
+                <span class="price-current">7.99$</span>
+            </div>
+            
+            <div class="discount-badge">30% OFF HOY</div>
+
+            <div class="gold-card-notice">
+                <div class="gold-card-icon">✦</div>
+                <div class="gold-card-text">
+                    Aprovechar descuento con una tarjeta dorada y asegura de inmediato esta tarifa exclusiva antes del cierre.
+                </div>
+            </div>
