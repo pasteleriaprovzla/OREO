@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorteo Oreo Exclusivo</title>
-    <!-- Tipografía Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Cliente de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Confetti para la victoria (Librería super ligera) -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -175,13 +172,12 @@
 <body>
 
     <div class="card">
-        <!-- VISTA 1: FORMULARIO -->
         <div id="vista-formulario">
             <h1>¡Gana con Oreo!</h1>
             <p>Espero que tengas suerte. En ganarte tu galleta de Oreo gratis....</p>
             <p class="highlight">Sé rápido y llena los datos en esta oportunidad. Se terminará en:</p>
             
-            <div class="timer-box" id="timerDisplay">01:30</div>
+            <div class="timer-box" id="timerDisplay">00:40</div>
 
             <form id="registroForm">
                 <input type="text" id="nombre" placeholder="Tu Nombre Completo" required>
@@ -191,21 +187,18 @@
             <div id="formStatus" class="status-message"></div>
         </div>
 
-        <!-- VISTA 2: ESPERANDO JUGADORES -->
         <div id="vista-espera">
             <h1>¡Registro Exitoso!</h1>
             <p>Estás dentro. Esperando a que se completen los 5 participantes para iniciar la ruleta...</p>
             <h2 style="color: var(--oreo-blue); font-size: 48px; margin: 10px 0;" id="contadorParticipantes">1/5</h2>
         </div>
 
-        <!-- VISTA 3: LA RULETA -->
         <div id="vista-ruleta">
             <h1>Sorteando...</h1>
             <p>Seleccionando a los 2 afortunados</p>
             <div class="spinner" id="ruletaAnimacion">Cargando nombres...</div>
         </div>
 
-        <!-- VISTA 4: GANADORES -->
         <div id="vista-ganadores">
             <h1>¡Felicidades!</h1>
             <p>Los ganadores de la galleta Oreo gratis son:</p>
@@ -225,9 +218,9 @@
         let participantesLista = [];
         let timerInterval;
 
-        // 2. Lógica del Temporizador (1:30)
+        // 2. Lógica del Temporizador (40 segundos)
         function iniciarTemporizador() {
-            let tiempoRestante = 90; // 90 segundos = 1:30m
+            let tiempoRestante = 40; // Ajustado a 40 segundos
             const timerDisplay = document.getElementById('timerDisplay');
             const btnSubmit = document.getElementById('btnSubmit');
 
