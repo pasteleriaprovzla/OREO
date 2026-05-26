@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteo Oreo Exclusivo</title>
+    <!-- Tipografía Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Cliente de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Confetti para la victoria (Librería super ligera) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --oreo-blue: #0032A0; /* Azul oficial aproximado de Oreo */
+            --oreo-dark: #001A57;
+            --white: #FFFFFF;
+            --light-gray: #F4F6F9;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--oreo-blue);
+            background-image: radial-gradient(circle, var(--oreo-blue) 0%, var(--oreo-dark) 100%);
+            color: var(--oreo-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background-color: var(--white);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Detalles visuales elegantes */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: var(--oreo-blue);
+        }
+
+        h1 {
+            color: var(--oreo-blue);
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--oreo-blue);
+        }
+
+        .timer-box {
+            background-color: var(--light-gray);
+            border: 2px solid var(--oreo-blue);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--oreo-blue);
+            margin-bottom: 25px;
+            display: inline-block;
+            min-width: 120px;
+            letter-spacing: 2px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--oreo-blue);
+            box-shadow: 0 0 5px rgba(0, 50, 160, 0.2);
+        }
+
+        button {
+            background-color: var(--oreo-blue);
+            color: var(--white);
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--oreo-dark);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            font-size: 13px;
+            color: #d9534f;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        /* Vistas dinámicas */
+        #vista-espera, #vista-ruleta, #vista-ganadores {
+            display: none;
+        }
+
+        .spinner {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--oreo-blue);
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            background: var(--light-gray);
+        }
+
+        .ganador-nombre {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            background: var(--oreo-blue);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- VISTA 1: FORMULARIO -->
+        <div id="vista-formulario">
+            <h1>¡Gana con Oreo!</h1>
+            <p>Espero que tengas suerte. En ganarte tu galleta de Oreo gratis....</p>
+            <p class="highlight">Sé rápido y llena los datos en esta oportunidad. Se terminará en:</p>
+            
+            <div class="timer-box" id="timerDisplay">01:30</div>
+
+            <form id="registroForm">
+                <input type="text" id="nombre" placeholder="Tu Nombre Completo" required>
+                <input type="email" id="correo" placeholder="Tu Correo Electrónico" required>
+                <button type="submit" id="btnSubmit">PARTICIPAR</button>
+            </form>
+            <div id="formStatus" class="status-message"></div>
+        </div>
+
+        <!-- VISTA 2: ESPERANDO JUGADORES -->
+        <div id="vista-espera">
+            <h1>¡Registro Exitoso!</h1>
+            <p>Estás dentro. Esperando a que se completen los 5 participantes para iniciar la ruleta...</p>
+            <h2 style="color: var(--oreo-blue); font-size: 48px; margin: 10px 0;" id="contadorParticipantes">1/5</h2>
+        </div>
+
+        <!-- VISTA 3: LA RULETA -->
+        <div id="vista-ruleta">
+            <h1>Sorteando...</h1>
+            <p>Seleccionando a los 2 afortunados</p>
+            <div class="spinner" id="ruletaAnimacion">Cargando nombres...</div>
+        </div>
+
+        <!-- VISTA 4: GANADORES -->
+        <div id="vista-ganadores">
+            <h1>¡Felicidades!</h1>
+            <p>Los ganadores de la galleta Oreo gratis son:</p>
+            <div id="listaGanadores"></div>
+            <p style="margin-top: 20px; font-size: 12px;">Por favor, acerquense a reclamar su premio.</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Configuración de Supabase
+        const supabaseUrl = 'https://rwbxiyonrtvyrcptxulh.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3YnhpeW9ucnR2eXJjcHR4dWxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTk4MTQsImV4cCI6MjA5NTM5NTgxNH0.OHJSv8AJhV9RBqeNdaOqaDqU2_INelzs07W0L5c25xQ';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Variables Globales
+        let totalParticipantes = 0;
+        let participantesLista = [];
+        let timerInterval;
+
+        // 2. Lógica del Temporizador (1:30)
+        function iniciarTemporizador() {
+            let tiempoRestante = 90; // 90 segundos = 1:30m
+            const timerDisplay = document.getElementById('timerDisplay');
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            timerInterval = setInterval(() => {
+                let minutos = Math.floor(tiempoRestante / 60);
+                let segundos = tiempoRestante % 60;
+                
+                // Formatear a 00:00
+                segundos = segundos < 10 ? '0' + segundos : segundos;
+                minutos = minutos < 10 ? '0' + minutos : minutos;
+                
+                timerDisplay.textContent = `${minutos}:${segundos}`;
+
+                if (tiempoRestante <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = "00:00";
+                    btnSubmit.disabled = true;
+                    btnSubmit.textContent = "TIEMPO AGOTADO";
+                    document.getElementById('formStatus').textContent = "La oportunidad ha terminado.";
+                }
+                tiempoRestante--;
+            }, 1000);
+        }
+
+        // 3. Manejo del Formulario
+        document.getElementById('registroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSubmit = document.getElementById('btnSubmit');
+            const statusDiv = document.getElementById('formStatus');
+            
+            const nombre = document.getElementById('nombre').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = "REGISTRANDO...";
+            statusDiv.textContent = "";
+
+            // Insertar en Supabase
+            const { error } = await _supabase
+                .from('participantes_reto')
+                .insert([{ nombre: nombre, email: correo }]);
+
+            if (error) {
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = "PARTICIPAR";
+                if (error.code === '23505') { // Código de error de Postgres para UNIQUE
+                    statusDiv.textContent = "Este correo ya está registrado.";
+                } else {
+                    statusDiv.textContent = "Hubo un error. Intenta de nuevo.";
+                    console.error(error);
+                }
+            } else {
+                // Éxito: Ocultar formulario, mostrar sala de espera
+                document.getElementById('vista-formulario').style.display = 'none';
+                document.getElementById('vista-espera').style.display = 'block';
+                verificarConteo(); // Chequear cuántos van
+            }
+        });
+
+        // 4. Lógica de Tiempo Real y Conteo
+        async function verificarConteo() {
+            const { count, error } = await _supabase
+                .from('participantes_reto')
+                .select('*', { count: 'exact', head: true });
+            
+            if (!error) {
+                actualizarConteo(count);
+            }
+        }
+
+        function actualizarConteo(count) {
+            totalParticipantes = count;
+            document.getElementById('contadorParticipantes').textContent = `${count}/5`;
+            
+            if (count >= 5) {
+                iniciarRuleta();
+            }
+        }
+
+        // Suscribirse a los cambios de la tabla en tiempo real
+        _supabase.channel('public:participantes_reto')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'participantes_reto' }, payload => {
+                verificarConteo(); // Cada vez que alguien entra, recalculamos
+            })
+            .subscribe();
+
+        // 5. Animación de la Ruleta
+        async function iniciarRuleta() {
+            // Detenemos el reloj si sigue corriendo
+            clearInterval(timerInterval); 
+
+            // Cambiamos a la vista de ruleta
+            document.getElementById('vista-formulario').style.display = 'none';
+            document.getElementById('vista-espera').style.display = 'none';
+            document.getElementById('vista-ruleta').style.display = 'block';
+
+            // Traer todos los nombres de Supabase
+            const { data, error } = await _supabase
+                .from('participantes_reto')
+                .select('nombre')
+                .limit(5);
+
+            if (error || !data) return;
+
+            const nombres = data.map(d => d.nombre);
+            const ruletaDisplay = document.getElementById('ruletaAnimacion');
+            
+            // Efecto de ruleta girando rápidamente
+            let ciclos = 0;
+            const intervaloRuleta = setInterval(() => {
+                ruletaDisplay.textContent = nombres[Math.floor(Math.random() * nombres.length)];
+                ciclos++;
+
+                // Después de ~3 segundos (30 ciclos de 100ms), detener y mostrar ganadores
+                if (ciclos > 30) {
+                    clearInterval(intervaloRuleta);
+                    mostrarGanadores(nombres);
+                }
+            }, 100);
+        }
+
+        function mostrarGanadores(nombres) {
+            // Mezclar el array aleatoriamente y tomar los 2 primeros
+            const mezclados = nombres.sort(() => 0.5 - Math.random());
+            const ganadores = mezclados.slice(0, 2);
+
+            document.getElementById('vista-ruleta').style.display = 'none';
+            const vistaGanadores = document.getElementById('vista-ganadores');
+            vistaGanadores.style.display = 'block';
+
+            const lista = document.getElementById('listaGanadores');
+            lista.innerHTML = `
+                <div class="ganador-nombre">🏆 ${ganadores[0]}</div>
+                <div class="ganador-nombre">🏆 ${ganadores[1]}</div>
+            `;
+
+            // Lanzar Confetti
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#0032A0', '#FFFFFF', '#001A57']
+            });
+        }
+
+        // Arrancar la app
+        window.onload = () => {
+            iniciarTemporizador();
+            verificarConteo(); // Verificar el conteo inicial por si ya hay gente registrada
+        };
+    </script>
+</body>
+</html>
