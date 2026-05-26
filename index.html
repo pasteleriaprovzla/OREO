@@ -169,7 +169,7 @@
         .gold-card-text {
             font-size: 0.95rem;
             font-weight: 700;
-            color: #fceca7; /* Tono dorado claro */
+            color: #fceca7;
             line-height: 1.3;
         }
 
@@ -189,13 +189,11 @@
             cursor: pointer;
             text-decoration: none;
             box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0, 0, 0, 0.2);
-            /* Transición fluida tipo Apple/Premium */
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
         }
 
-        /* Efecto de brillo que pasa por encima del botón constantemente */
         .btn-buy::before {
             content: '';
             position: absolute;
@@ -213,9 +211,8 @@
             animation: shine 3s infinite linear;
         }
 
-        /* Comportamiento al pasar el mouse por encima */
         .btn-buy:hover {
-            transform: translateY(-4px); /* Levanta el botón ligeramente */
+            transform: translateY(-4px);
             background: linear-gradient(90deg, #e0efff 0%, #ffffff 100%);
             box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2), 0 6px 15px rgba(0, 0, 0, 0.3);
             color: #0c4cb4;
@@ -225,7 +222,125 @@
             transform: translateY(-1px);
         }
 
-        /* === ANIMACIONES CSS === */
+        /* === ESTILOS DEL MODAL DE PAGO MÓVIL === */
+        .modal-fondo {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(5, 32, 70, 0.85); /* Azul Oreo oscuro translúcido */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-caja {
+            background-color: #ffffff;
+            color: #052046;
+            padding: 40px 30px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .cerrar-modal {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #8da4c4;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .cerrar-modal:hover {
+            color: #ff3b30;
+        }
+
+        .modal-caja h2 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: #0e52a4;
+            text-transform: uppercase;
+        }
+
+        .modal-desc {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .datos-bancarios {
+            background-color: #f4f8ff;
+            border: 2px dashed #bbdbff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .datos-bancarios p {
+            margin: 10px 0;
+            font-size: 1.05rem;
+            color: #333;
+        }
+
+        .datos-bancarios strong {
+            color: #0e52a4;
+            font-weight: 800;
+        }
+
+        .monto-oferta {
+            color: #ff3b30;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .nota {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #20bd5a;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        /* === ANIMACIONES CSS BASE === */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -284,6 +399,58 @@
             <div class="gold-card-notice">
                 <div class="gold-card-icon">✦</div>
                 <div class="gold-card-text">
-                    Aprovechar descuento con una tarjeta dorada y asegura de inmediato esta tarifa exclusiva antes del cierre.
+                    Aprovecha el descuento con una tarjeta dorada y asegura de inmediato esta tarifa exclusiva antes del cierre.
                 </div>
             </div>
+
+            <button id="btnValidarOferta" class="btn-buy">VALIDAR OFERTA</button>
+
+        </div>
+    </div>
+
+    <div id="modalPagoMovil" class="modal-fondo">
+        <div class="modal-caja">
+            <span class="cerrar-modal" id="btnCerrarModal">&times;</span>
+            <h2>Datos de Pago</h2>
+            <p class="modal-desc">Transfiere a los siguientes datos para apartar tu oferta de inmediato:</p>
+            
+            <div class="datos-bancarios">
+                <p><strong>Banco:</strong> Banesco (0134)</p>
+                <p><strong>Teléfono:</strong> 0414-1234567</p>
+                <p><strong>Cédula/RIF:</strong> V-12345678</p>
+                <p><strong>Monto:</strong> <span class="monto-oferta">7.99$ (Tasa BCV)</span></p>
+            </div>
+
+            <p class="nota">Una vez realizado el pago, envíanos la captura de pantalla por WhatsApp.</p>
+            
+            <button class="btn-whatsapp" onclick="window.open('https://wa.me/584141234567?text=Hola,%20acabo%20de%20pagar%20la%20oferta%20del%20Combo%20Oreo', '_blank')">
+                Enviar Comprobante
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById("modalPagoMovil");
+        const btnAbrir = document.getElementById("btnValidarOferta");
+        const btnCerrar = document.getElementById("btnCerrarModal");
+
+        // Abrir el modal con efecto suave
+        btnAbrir.addEventListener("click", function() {
+            modal.style.display = "flex";
+        });
+
+        // Cerrar el modal tocando la X
+        btnCerrar.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+
+        // Cerrar el modal haciendo clic fuera de la caja blanca
+        window.addEventListener("click", function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    </script>
+
+</body>
+</html>
