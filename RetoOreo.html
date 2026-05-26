@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorteo Oreo Exclusivo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
-            --oreo-blue: #0032A0; /* Azul oficial aproximado de Oreo */
+            --oreo-blue: #0032A0; 
             --oreo-dark: #001A57;
             --white: #FFFFFF;
             --light-gray: #F4F6F9;
+            --gold: #FFD700;
         }
 
         body {
@@ -26,63 +27,65 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             box-sizing: border-box;
         }
 
         .card {
             background-color: var(--white);
-            padding: 40px 30px;
+            padding: 30px 20px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             text-align: center;
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
             position: relative;
             overflow: hidden;
+            box-sizing: border-box;
         }
 
-        /* Detalles visuales elegantes */
         .card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 6px;
+            height: 8px;
             background-color: var(--oreo-blue);
         }
 
         h1 {
             color: var(--oreo-blue);
-            font-size: 24px;
+            font-size: 26px;
+            margin-top: 0;
             margin-bottom: 15px;
-            font-weight: 700;
+            font-weight: 900;
+            text-transform: uppercase;
         }
 
         p {
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 15px;
+            line-height: 1.5;
             margin-bottom: 20px;
             color: #333;
         }
 
         .highlight {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--oreo-blue);
         }
 
+        /* Temporizador Móvil */
         .timer-box {
             background-color: var(--light-gray);
-            border: 2px solid var(--oreo-blue);
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 24px;
-            font-weight: 700;
+            border: 3px solid var(--oreo-blue);
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 32px;
+            font-weight: 900;
             color: var(--oreo-blue);
             margin-bottom: 25px;
             display: inline-block;
-            min-width: 120px;
             letter-spacing: 2px;
         }
 
@@ -90,83 +93,101 @@
             width: 100%;
             padding: 15px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
             font-family: 'Montserrat', sans-serif;
             box-sizing: border-box;
-            transition: border-color 0.3s;
         }
 
         input:focus {
             outline: none;
             border-color: var(--oreo-blue);
-            box-shadow: 0 0 5px rgba(0, 50, 160, 0.2);
         }
 
         button {
             background-color: var(--oreo-blue);
             color: var(--white);
             border: none;
-            padding: 15px;
-            font-size: 16px;
+            padding: 16px;
+            font-size: 18px;
             font-weight: 700;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
             font-family: 'Montserrat', sans-serif;
-            transition: background-color 0.3s, transform 0.1s;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,50,160,0.3);
+            transition: all 0.3s;
         }
 
-        button:hover {
-            background-color: var(--oreo-dark);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
+        button:active { transform: translateY(2px); }
+        button:disabled { background-color: #ccc; box-shadow: none; }
 
         .status-message {
-            font-size: 13px;
+            font-size: 14px;
             color: #d9534f;
             margin-top: 10px;
+            font-weight: 600;
             min-height: 20px;
         }
 
-        /* Vistas dinámicas */
-        #vista-espera, #vista-ruleta, #vista-ganadores {
-            display: none;
-        }
+        /* Vistas dinámicas ocultas */
+        #vista-espera, #vista-ruletas, #vista-ganadores { display: none; }
 
-        .spinner {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--oreo-blue);
-            height: 50px;
+        /* Contenedor de Ruletas para Móvil (Apiladas) */
+        .seccion-ruletas {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
             align-items: center;
-            margin: 20px 0;
-            overflow: hidden;
-            border: 2px solid var(--light-gray);
-            border-radius: 10px;
-            background: var(--light-gray);
         }
 
-        .ganador-nombre {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--white);
-            background: var(--oreo-blue);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
+        .caja-ruleta {
+            background: var(--light-gray);
+            border: 3px solid var(--oreo-blue);
+            border-radius: 20px;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
         }
+
+        .caja-ruleta h3 {
+            margin-top: 0;
+            color: var(--oreo-dark);
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        canvas {
+            background: transparent;
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Ganadores Móvil */
+        .contenedor-ganadores {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tarjeta-ganador {
+            background: linear-gradient(135deg, var(--oreo-blue) 0%, var(--oreo-dark) 100%);
+            color: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .corona { font-size: 35px; margin-bottom: 5px; }
+        .nombre { font-size: 22px; font-weight: 900; word-break: break-word; }
+        .puesto { color: var(--gold); font-weight: 700; margin-top: 5px; font-size: 14px; text-transform: uppercase;}
     </style>
 </head>
 <body>
@@ -174,8 +195,7 @@
     <div class="card">
         <div id="vista-formulario">
             <h1>¡Gana con Oreo!</h1>
-            <p>Espero que tengas suerte. En ganarte tu galleta de Oreo gratis....</p>
-            <p class="highlight">Sé rápido y llena los datos en esta oportunidad. Se terminará en:</p>
+            <p>Registra tus datos rápidamente para participar por el premio.</p>
             
             <div class="timer-box" id="timerDisplay">00:40</div>
 
@@ -189,38 +209,58 @@
 
         <div id="vista-espera">
             <h1>¡Registro Exitoso!</h1>
-            <p>Estás dentro. Esperando a que se completen los 5 participantes para iniciar la ruleta...</p>
-            <h2 style="color: var(--oreo-blue); font-size: 48px; margin: 10px 0;" id="contadorParticipantes">1/5</h2>
+            <p>Estás dentro del sistema. Mira la pantalla grande y espera a que se unan los demás.</p>
+            <h2 style="color: var(--oreo-blue); font-size: 60px; margin: 15px 0; font-weight: 900;" id="contadorParticipantes">1/5</h2>
+            <p class="highlight">Sincronizando pantallas...</p>
         </div>
 
-        <div id="vista-ruleta">
-            <h1>Sorteando...</h1>
-            <p>Seleccionando a los 2 afortunados</p>
-            <div class="spinner" id="ruletaAnimacion">Cargando nombres...</div>
+        <div id="vista-ruletas">
+            <h1>¡Sorteo en Marcha!</h1>
+            
+            <div class="seccion-ruletas">
+                <div class="caja-ruleta">
+                    <h3>Premio #1</h3>
+                    <canvas id="ruletaCanvas1" width="250" height="250"></canvas>
+                </div>
+                <div class="caja-ruleta">
+                    <h3>Premio #2</h3>
+                    <canvas id="ruletaCanvas2" width="250" height="250"></canvas>
+                </div>
+            </div>
         </div>
 
         <div id="vista-ganadores">
-            <h1>¡Felicidades!</h1>
-            <p>Los ganadores de la galleta Oreo gratis son:</p>
-            <div id="listaGanadores"></div>
-            <p style="margin-top: 20px; font-size: 12px;">Por favor, acerquense a reclamar su premio.</p>
+            <h1>¡Tenemos Ganadores!</h1>
+            <p>Revisa si tu nombre aparece abajo y pasa al frente.</p>
+            
+            <div class="contenedor-ganadores">
+                <div class="tarjeta-ganador">
+                    <div class="corona">👑</div>
+                    <div class="nombre" id="ganador1-nombre">Nombre 1</div>
+                    <div class="puesto">Premio Especial</div>
+                </div>
+                <div class="tarjeta-ganador">
+                    <div class="corona">👑</div>
+                    <div class="nombre" id="ganador2-nombre">Nombre 2</div>
+                    <div class="puesto">Premio Especial</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // 1. Configuración de Supabase
+        // 1. Configuración del Cliente Supabase
         const supabaseUrl = 'https://rwbxiyonrtvyrcptxulh.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3YnhpeW9ucnR2eXJjcHR4dWxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTk4MTQsImV4cCI6MjA5NTM5NTgxNH0.OHJSv8AJhV9RBqeNdaOqaDqU2_INelzs07W0L5c25xQ';
         const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Variables Globales
-        let totalParticipantes = 0;
-        let participantesLista = [];
         let timerInterval;
+        let ruletaActiva = false;
+        const coloresRuleta = ['#0032A0', '#001A57', '#004BEE', '#FFD700', '#FFFFFF'];
 
-        // 2. Lógica del Temporizador (40 segundos)
+        // 2. Control del reloj (40 segundos)
         function iniciarTemporizador() {
-            let tiempoRestante = 40; // Ajustado a 40 segundos
+            let tiempoRestante = 40;
             const timerDisplay = document.getElementById('timerDisplay');
             const btnSubmit = document.getElementById('btnSubmit');
 
@@ -228,7 +268,6 @@
                 let minutos = Math.floor(tiempoRestante / 60);
                 let segundos = tiempoRestante % 60;
                 
-                // Formatear a 00:00
                 segundos = segundos < 10 ? '0' + segundos : segundos;
                 minutos = minutos < 10 ? '0' + minutos : minutos;
                 
@@ -239,13 +278,13 @@
                     timerDisplay.textContent = "00:00";
                     btnSubmit.disabled = true;
                     btnSubmit.textContent = "TIEMPO AGOTADO";
-                    document.getElementById('formStatus').textContent = "La oportunidad ha terminado.";
+                    document.getElementById('formStatus').textContent = "El tiempo de registro ha terminado.";
                 }
                 tiempoRestante--;
             }, 1000);
         }
 
-        // 3. Manejo del Formulario
+        // 3. Envío del Formulario
         document.getElementById('registroForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btnSubmit = document.getElementById('btnSubmit');
@@ -258,7 +297,6 @@
             btnSubmit.textContent = "REGISTRANDO...";
             statusDiv.textContent = "";
 
-            // Insertar en Supabase
             const { error } = await _supabase
                 .from('participantes_reto')
                 .insert([{ nombre: nombre, email: correo }]);
@@ -266,110 +304,198 @@
             if (error) {
                 btnSubmit.disabled = false;
                 btnSubmit.textContent = "PARTICIPAR";
-                if (error.code === '23505') { // Código de error de Postgres para UNIQUE
-                    statusDiv.textContent = "Este correo ya está registrado.";
+                if (error.code === '23505') { 
+                    statusDiv.textContent = "Este correo ya está participando.";
                 } else {
-                    statusDiv.textContent = "Hubo un error. Intenta de nuevo.";
-                    console.error(error);
+                    statusDiv.textContent = "Error de conexión. Intenta nuevamente.";
                 }
             } else {
-                // Éxito: Ocultar formulario, mostrar sala de espera
                 document.getElementById('vista-formulario').style.display = 'none';
                 document.getElementById('vista-espera').style.display = 'block';
-                verificarConteo(); // Chequear cuántos van
+                verificarConteo(); 
             }
         });
 
-        // 4. Lógica de Tiempo Real y Conteo
+        // 4. Mecanismo Realtime
         async function verificarConteo() {
             const { count, error } = await _supabase
                 .from('participantes_reto')
                 .select('*', { count: 'exact', head: true });
             
             if (!error) {
-                actualizarConteo(count);
+                document.getElementById('contadorParticipantes').textContent = `${count}/5`;
+                if (count >= 5 && !ruletaActiva) {
+                    ruletaActiva = true;
+                    setTimeout(obtenerNombresYDisparar, 1200); // Dar un momento antes de girar
+                }
             }
         }
 
-        function actualizarConteo(count) {
-            totalParticipantes = count;
-            document.getElementById('contadorParticipantes').textContent = `${count}/5`;
-            
-            if (count >= 5) {
-                iniciarRuleta();
-            }
-        }
-
-        // Suscribirse a los cambios de la tabla en tiempo real
         _supabase.channel('public:participantes_reto')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'participantes_reto' }, payload => {
-                verificarConteo(); // Cada vez que alguien entra, recalculamos
+                verificarConteo();
             })
             .subscribe();
 
-        // 5. Animación de la Ruleta
-        async function iniciarRuleta() {
-            // Detenemos el reloj si sigue corriendo
+        // 5. Motor de Doble Ruleta (SINCRONIZADO)
+        async function obtenerNombresYDisparar() {
             clearInterval(timerInterval); 
 
-            // Cambiamos a la vista de ruleta
             document.getElementById('vista-formulario').style.display = 'none';
             document.getElementById('vista-espera').style.display = 'none';
-            document.getElementById('vista-ruleta').style.display = 'block';
+            document.getElementById('vista-ruletas').style.display = 'block';
 
-            // Traer todos los nombres de Supabase
+            // ESTO ES LO QUE SINCRONIZA LOS TELÉFONOS CON LA PANTALLA GRANDE
+            // Ordenamos la lista exactamente igual por el ID
             const { data, error } = await _supabase
                 .from('participantes_reto')
-                .select('nombre')
+                .select('nombre, id')
+                .order('id', { ascending: true }) 
                 .limit(5);
 
-            if (error || !data) return;
+            if (error || !data || data.length < 5) return;
+            const listaNombres = data.map(d => d.nombre);
 
-            const nombres = data.map(d => d.nombre);
-            const ruletaDisplay = document.getElementById('ruletaAnimacion');
-            
-            // Efecto de ruleta girando rápidamente
-            let ciclos = 0;
-            const intervaloRuleta = setInterval(() => {
-                ruletaDisplay.textContent = nombres[Math.floor(Math.random() * nombres.length)];
-                ciclos++;
+            // Al estar ordenada la lista desde el servidor, tomamos la posición 0 y 1 en todos los teléfonos.
+            const indiceG1 = 0;
+            const ganador1 = listaNombres[indiceG1];
 
-                // Después de ~3 segundos (30 ciclos de 100ms), detener y mostrar ganadores
-                if (ciclos > 30) {
-                    clearInterval(intervaloRuleta);
-                    mostrarGanadores(nombres);
-                }
-            }, 100);
-        }
+            const indiceG2 = 1;
+            const ganador2 = listaNombres[indiceG2];
 
-        function mostrarGanadores(nombres) {
-            // Mezclar el array aleatoriamente y tomar los 2 primeros
-            const mezclados = nombres.sort(() => 0.5 - Math.random());
-            const ganadores = mezclados.slice(0, 2);
+            let r1Terminada = false;
+            let r2Terminada = false;
 
-            document.getElementById('vista-ruleta').style.display = 'none';
-            const vistaGanadores = document.getElementById('vista-ganadores');
-            vistaGanadores.style.display = 'block';
+            animarRuedaCanvas('ruletaCanvas1', listaNombres, indiceG1, () => {
+                r1Terminada = true;
+                if (r1Terminada && r2Terminada) desplegarResultados(ganador1, ganador2);
+            });
 
-            const lista = document.getElementById('listaGanadores');
-            lista.innerHTML = `
-                <div class="ganador-nombre">🏆 ${ganadores[0]}</div>
-                <div class="ganador-nombre">🏆 ${ganadores[1]}</div>
-            `;
-
-            // Lanzar Confetti
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#0032A0', '#FFFFFF', '#001A57']
+            animarRuedaCanvas('ruletaCanvas2', listaNombres, indiceG2, () => {
+                r2Terminada = true;
+                if (r1Terminada && r2Terminada) desplegarResultados(ganador1, ganador2);
             });
         }
 
-        // Arrancar la app
+        // 6. Motor Gráfico de la Rueda (Canvas)
+        function animarRuedaCanvas(canvasId, nombres, indiceGanador, alTerminar) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const numSeg = nombres.length;
+            const tArco = (2 * Math.PI) / numSeg;
+
+            const posicionObjetivo = (1.5 * Math.PI - (indiceGanador * tArco + tArco / 2) + 2 * Math.PI) % (2 * Math.PI);
+            const anguloDeGiroFinal = posicionObjetivo + (2 * Math.PI * 5); // 5 vueltas
+
+            let tiempoInicio = null;
+            const duracionSorteo = 4500; 
+
+            function renderizarRueda(anguloActual) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const radio = (canvas.width / 2) - 10; // Margen para móvil
+
+                for (let i = 0; i < numSeg; i++) {
+                    const anguloSector = anguloActual + (i * tArco);
+                    ctx.fillStyle = coloresRuleta[i % coloresRuleta.length];
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.arc(cx, cy, radio, anguloSector, anguloSector + tArco);
+                    ctx.lineTo(cx, cy);
+                    ctx.fill();
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.save();
+                    if (coloresRuleta[i % coloresRuleta.length] === '#FFFFFF') ctx.fillStyle = '#0032A0';
+                    else if (coloresRuleta[i % coloresRuleta.length] === '#FFD700') ctx.fillStyle = '#001A57';
+                    else ctx.fillStyle = '#FFFFFF';
+
+                    ctx.font = 'bold 12px Montserrat';
+                    ctx.textBaseline = 'middle';
+                    ctx.textAlign = 'center';
+                    
+                    ctx.translate(cx, cy);
+                    ctx.rotate(anguloSector + tArco / 2);
+                    ctx.fillText(nombres[i], radio * 0.6, 0);
+                    ctx.restore();
+                }
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, 15, 0, 2 * Math.PI);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fill();
+                ctx.strokeStyle = varColor('--oreo-blue');
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.fillStyle = varColor('--gold');
+                ctx.beginPath();
+                ctx.moveTo(cx, 2);
+                ctx.lineTo(cx - 10, 18);
+                ctx.lineTo(cx + 10, 18);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            function frameAnimacion(timestamp) {
+                if (!tiempoInicio) tiempoInicio = timestamp;
+                const transcurrido = timestamp - tiempoInicio;
+                const progreso = Math.min(transcurrido / duracionSorteo, 1);
+
+                const desaceleracion = 1 - Math.pow(1 - progreso, 3);
+                const rotacionActual = desaceleracion * anguloDeGiroFinal;
+
+                renderizarRueda(rotacionActual);
+
+                if (progreso < 1) {
+                    requestAnimationFrame(frameAnimacion);
+                } else {
+                    alTerminar();
+                }
+            }
+
+            requestAnimationFrame(frameAnimacion);
+        }
+
+        function varColor(nombreVar) {
+            return getComputedStyle(document.documentElement).getPropertyValue(nombreVar).trim();
+        }
+
+        function desplegarResultados(g1, g2) {
+            setTimeout(() => {
+                document.getElementById('vista-ruletas').style.display = 'none';
+                document.getElementById('vista-ganadores').style.display = 'block';
+
+                document.getElementById('ganador1-nombre').textContent = g1;
+                document.getElementById('ganador2-nombre').textContent = g2;
+
+                lanzarFuegosArtificialesPapel();
+            }, 600);
+        }
+
+        function lanzarFuegosArtificialesPapel() {
+            const limiteTiempo = Date.now() + 3000; 
+
+            (function rafLoop() {
+                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: ['#0032A0', '#FFFFFF', '#FFD700'] });
+                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: ['#0032A0', '#FFFFFF', '#FFD700'] });
+
+                if (Date.now() < limiteTiempo) {
+                    requestAnimationFrame(rafLoop);
+                }
+            }());
+        }
+
         window.onload = () => {
             iniciarTemporizador();
-            verificarConteo(); // Verificar el conteo inicial por si ya hay gente registrada
+            verificarConteo();
         };
     </script>
 </body>
